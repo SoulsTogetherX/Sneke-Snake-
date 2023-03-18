@@ -152,40 +152,59 @@ while mainGame:
 
 				# Checks if a key has been pressed
 			elif event.type == pg.KEYDOWN:
-					# Checks if the user is attempting to change the controls
+					# Checks if the user is attempting to change a keybind
 				if changeKey:
+						# Checks for conflicting keybinds
 					if event.key in K_inputs:
+							# Gives a warning if a conflicting key, that is not itself, is attempted to be binded
 						if event.key != K_inputs[key_change]:
 							select_color = RED
 					else:
+							# Sets the keybind
 						K_inputs[key_change] = event.key
 						options[1] = (6, ("Left: " + pg.key.name(K_inputs[0]), "Right: " + pg.key.name(K_inputs[1]), "Up: " + pg.key.name(K_inputs[2]), "Down: " + pg.key.name(K_inputs[3]), "Enter: " + pg.key.name(K_inputs[4]),"Back"))
-						
+
+						# User is no longer attempting to change a keybind
 					changeKey = False
 				else:
+						# User is no longer attempting to change a keybind
 					if event.key == K_inputs[4]:
+							# Checks what menu user is in
 						if menu_type == 0:
+								# Options for the main menu
 							if idx == 0:
+									# Play
 								menu, run = False, True
 							elif idx == 3:
+									# Quit
 								mainGame, menu = False, False
 							else:
+									# Controls/Settings
 								menu_type, idx = idx, 0
 						elif menu_type == 1:
+								# Options for the controls menu
 							if idx == 5:
+									# Back
 								menu_type, idx = 0, 1
 							else:
+									# Change Controls
 								key_change = idx
 								changeKey = True
 						elif menu_type == 2:
+								# Options for the settings menu
 							if idx == 4:
+									# Back
 								menu_type, idx = 0, 2
-						
+
+						# Moves up or down in the menu
 					elif event.key == K_inputs[3]:
 						idx = (idx + 1) % options[menu_type][0]
 					elif event.key == K_inputs[2]:
 						idx = (idx - 1) % options[menu_type][0]
+
+						# If in settings menu, LEFT and RIGHT keys also do stuff
 					elif menu_type == 2:
+							# If LEFT, decrease currently selected setting (warning if not able to)
 						if event.key == K_inputs[0]:
 							if idx == 0:
 								if scale - 1 < MIN_SCALE:
@@ -208,6 +227,7 @@ while mainGame:
 								else:
 									delay -= 1
 
+							# If RIGHT, decrease currently selected setting (warning if not able to)
 						elif event.key == K_inputs[1]:
 							if idx == 0:
 								if scale + 1 > MAX_SCALE:
@@ -230,6 +250,7 @@ while mainGame:
 								else:
 									delay += 1
 
+							# Change settings display text
 						options[2] = (5, ("Resolution: " + str(scale), "Board Width: " + str(boardW), "Board Height: " + str(boardH), "Snake Delay: " + str(delay), "Back"))
 
 
@@ -294,6 +315,7 @@ while mainGame:
 				# Ends the game if quit
 			if event.type == pg.QUIT:
 				mainGame, run = False, False
+
 				# Updates all tiles when step event occurs
 			elif event.type == STEP_EVENT:
 					# Increases the count of all snake tail tiles
@@ -355,15 +377,22 @@ while mainGame:
 
 
 			# Updates the direction the player will move to next dependant on key presses and current direction
+				# LEFT
 		if pg.key.get_pressed()[K_inputs[0]]:
 			if player.dir != 1:
 				newDir = 3
+
+				# RIGHT
 		elif pg.key.get_pressed()[K_inputs[1]]:
 			if player.dir != 3:
 				newDir = 1
+
+				# UP
 		elif pg.key.get_pressed()[K_inputs[2]]:
 			if player.dir != 2:
 				newDir = 0
+
+				# DOWN
 		elif pg.key.get_pressed()[K_inputs[3]]:
 			if player.dir != 0:
 				newDir = 2
@@ -384,11 +413,14 @@ while mainGame:
 			# FPS
 		clock.tick(60)
 
+		# Pauses the game in the event of a loss
 	while gameOver:
 		for event in pg.event.get():
 			if event.type == pg.QUIT:
+					# Ends the game if quit
 				mainGame, gameOver = False, False
 			elif event.type == pg.KEYDOWN and event.key == K_inputs[4]:
+					# Starts the game again if SELECT key is pressed
 				gameOver = False
 
 	# Saves settings
